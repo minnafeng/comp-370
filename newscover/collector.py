@@ -3,7 +3,7 @@ import argparse
 import json
 import os
 
-from newscover.newsapi import fetch_latest_news
+from newsapi import fetch_latest_news
 
 
 def main():
