@@ -1,5 +1,7 @@
 # Celebrity Dating
-Extract celebrity data from whosdatedwho.com
+
+## Description
+Web scraper to extract celebrity data from whosdatedwho.com
 
 ## Usage
 ```bash
