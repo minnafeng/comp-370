@@ -25,7 +25,7 @@ def compute_top_tfidf(word_counts, num_words):
 
         # Compute tf-idf for each word
         for word, count in word_count.items():
-            tf = count #/ total_words
+            tf = count / total_words
             idf = math.log10(TOTAL_NUM_PONIES / sum(1 for p in word_counts if word in word_counts[p]))
             tfidf = tf * idf
             tfidf_scores[pony].append((word, tfidf))
@@ -52,7 +52,7 @@ def main():
     with open(count_file, "r") as f:
         word_counts = json.load(f)
 
-    # compute my_little_pony
+    # compute top words
     top_words = compute_top_tfidf(word_counts, num_words)
 
     # write result to a JSON file
