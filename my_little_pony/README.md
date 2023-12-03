@@ -2,7 +2,7 @@
 
 ## Description
 Using the following dataset from Kaggle: https://www.kaggle.com/datasets/liury123/my-little-pony-transcript,
-I perform data analysis and network analysis on the transcripts of the show My Little Pony: Friendship is Magic.
+I perform most frequent word analysis and network analysis on the transcripts of the show My Little Pony: Friendship is Magic.
 
 ## Usage
 To compile the word counts for each pony and save them as a json file, run the following command:
