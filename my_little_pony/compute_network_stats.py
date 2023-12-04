@@ -28,16 +28,10 @@ def compute_stats(in_file):
     betweenness_centrality = nx.betweenness_centrality(g)
 
     # Get top characters for each centrality measure
-    top_degree_characters = sorted(
-        degree_centrality.items(), key=lambda x: x[1], reverse=True
-    )[:3]
+    top_degree_characters = sorted(degree_centrality.items(), key=lambda x: x[1], reverse=True)[:3]
     top_weighted_degree_characters = sorted(weighted_degree_centrality.items(), key=lambda x: x[1], reverse=True)[:3]
-    top_closeness_characters = sorted(
-        closeness_centrality.items(), key=lambda x: x[1], reverse=True
-    )[:3]
-    top_betweenness_characters = sorted(
-        betweenness_centrality.items(), key=lambda x: x[1], reverse=True
-    )[:3]
+    top_closeness_characters = sorted(closeness_centrality.items(), key=lambda x: x[1], reverse=True)[:3]
+    top_betweenness_characters = sorted(betweenness_centrality.items(), key=lambda x: x[1], reverse=True)[:3]
 
     # Create the output dictionary
     stats = {
