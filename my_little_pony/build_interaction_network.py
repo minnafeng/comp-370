@@ -6,54 +6,33 @@ import argparse
 def build_network(in_file):
     """Build network of interactions between ponies."""
     # Read the CSV file
-    df = pd.read_csv(in_file, header=0)
+    df = pd.read_csv(in_file)
 
     # Create a dictionary to store interactions
     interactions = {}
     forbidden_words = ["other", "ponies", "and", "all"]
 
-    # Iterate through each episode
+    # Go through each episode
     for episode, group in df.groupby('title'):
 
+        # Go through each line in the episode
         for _, row in group.iterrows():
             speaker = row['pony']
 
-            for word in forbidden_words:
-                if word in speaker:
-                    continue
-
-            # Find the index of the current row in the group
+            # get indices of current and next speaker
             i = row.name
+            if i != group.index[-1]:  # skip if last line of episode
+                next_speaker = group.at[i + 1, 'pony']
 
-            # Skip if it's the last row in the group
-            if i == group.index[-1]:
-                continue
+                # check for forbidden words and if same speaker
+                if not any(word in next_speaker for word in forbidden_words) and speaker != next_speaker:
+                    # ensure all necessary keys exist
+                    interactions.setdefault(speaker, {}).setdefault(next_speaker, 0)
+                    interactions.setdefault(next_speaker, {}).setdefault(speaker, 0)
 
-            # Get the next speaker
-            next_speaker = group.at[i + 1, 'pony']
-
-            for word in forbidden_words:
-                if word in next_speaker:
-                    i = i + 1
-                    continue
-
-            # Skip if the speaker is the same as the next_speaker
-            if speaker == next_speaker:
-                continue
-
-            # Add the interaction to the dictionary
-            if speaker not in interactions:
-                interactions[speaker] = {}
-
-            if next_speaker not in interactions:
-                interactions[next_speaker] = {}
-
-            if next_speaker not in interactions[speaker]:
-                interactions[speaker][next_speaker] = 1
-                interactions[next_speaker][speaker] = 1
-            else:
-                interactions[speaker][next_speaker] += 1
-                interactions[next_speaker][speaker] += 1
+                    # increment the interaction count
+                    interactions[speaker][next_speaker] += 1
+                    interactions[next_speaker][speaker] += 1
 
     return interactions
 
