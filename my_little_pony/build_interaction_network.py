@@ -29,18 +29,16 @@ def build_network(in_file):
             i = row.name
 
             # skip if last line of episode
-            if i == group.index[-1]:  # skip if last line of episode
+            if i == group.index[-1]:
                 continue
 
             next_speaker = group.at[i + 1, 'pony'].lower()
 
-            # skip if any speaker not in top_characters
-            if speaker not in top_characters or next_speaker not in top_characters:
-                continue
-
-            # check for forbidden words and if same speaker
+            # check for top characters, forbidden words, and if same speaker
             if any (word in speaker for word in forbidden_words) or \
                     any(word in next_speaker for word in forbidden_words) or \
+                    speaker not in top_characters or \
+                    next_speaker not in top_characters or \
                     speaker == next_speaker:
                 continue
 

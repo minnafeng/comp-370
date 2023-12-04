@@ -12,7 +12,7 @@ def compute_stats(in_file):
     with open(in_file, "r") as f:
         interactions = json.load(f)
 
-    g = nx.DiGraph()
+    g = nx.Graph()
 
     # Add nodes and edges with weights
     for source, targets in interactions.items():
@@ -24,8 +24,10 @@ def compute_stats(in_file):
 
     # Compute centrality measures
     degree_centrality = nx.degree_centrality(g)
-    weighted_degree_centrality = {node: sum(weight for _, _, weight in g.out_edges(node, data='weight')) / total_edges
-                                  for node in g.nodes}
+    weighted_degree_centrality = {
+        node: sum(weight for _,_,weight in g.edges(node, data='weight')) / total_edges
+        for node in g.nodes
+    }
     closeness_centrality = nx.closeness_centrality(g)
     betweenness_centrality = nx.betweenness_centrality(g)
 
@@ -40,9 +42,7 @@ def compute_stats(in_file):
         "degree": [character for character, centrality in top_degree_characters],
         "weighted_degree": [character for character, centrality in top_weighted_degree_characters],
         "closeness": [character for character, centrality in top_closeness_characters],
-        "betweenness": [
-            character for character, centrality in top_betweenness_characters
-        ],
+        "betweenness": [character for character, centrality in top_betweenness_characters],
     }
 
     return stats
