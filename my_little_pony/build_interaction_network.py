@@ -8,19 +8,22 @@ def build_network(in_file):
     # Read the CSV file
     df = pd.read_csv(in_file)
 
-    # Get the top 101 most frequent characters
+    # Get the top 101 most frequent characters and convert to lowercase
     top_characters = df['pony'].value_counts().head(101).index.tolist()
+    top_characters = [character.lower() for character in top_characters]
 
     # Create a dictionary to store interactions
     interactions = {}
-    forbidden_words = ["other", "ponies", "and", "all"]
+
+    # List of words to not count as speakers
+    forbidden_words = ["other", "others", "ponies", "and", "all"]
 
     # Go through each episode
     for episode, group in df.groupby('title'):
 
         # Go through each line in the episode
         for _, row in group.iterrows():
-            speaker = row['pony']
+            speaker = row['pony'].lower()
 
             # get index of current speaker
             i = row.name
@@ -29,21 +32,25 @@ def build_network(in_file):
             if i == group.index[-1]:  # skip if last line of episode
                 continue
 
-            next_speaker = group.at[i + 1, 'pony']
+            next_speaker = group.at[i + 1, 'pony'].lower()
 
             # skip if any speaker not in top_characters
             if speaker not in top_characters or next_speaker not in top_characters:
                 continue
 
             # check for forbidden words and if same speaker
-            if not any(word in next_speaker for word in forbidden_words) and speaker != next_speaker:
-                # ensure all necessary keys exist
-                interactions.setdefault(speaker, {}).setdefault(next_speaker, 0)
-                interactions.setdefault(next_speaker, {}).setdefault(speaker, 0)
+            if any (word in speaker for word in forbidden_words) or \
+                    any(word in next_speaker for word in forbidden_words) or \
+                    speaker == next_speaker:
+                continue
 
-                # increment the interaction count
-                interactions[speaker][next_speaker] += 1
-                interactions[next_speaker][speaker] += 1
+            # ensure all necessary keys exist
+            interactions.setdefault(speaker, {}).setdefault(next_speaker, 0)
+            interactions.setdefault(next_speaker, {}).setdefault(speaker, 0)
+
+            # increment the interaction count
+            interactions[speaker][next_speaker] += 1
+            interactions[next_speaker][speaker] += 1
 
     return interactions
 

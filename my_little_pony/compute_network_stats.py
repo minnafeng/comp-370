@@ -13,17 +13,19 @@ def compute_stats(in_file):
         interactions = json.load(f)
 
     g = nx.DiGraph()
-    g_weighted = nx.DiGraph()
 
     # Add nodes and edges with weights
     for source, targets in interactions.items():
         for target, weight in targets.items():
-            g.add_edge(source, target)
-            g_weighted.add_edge(source, target, weight=weight)
+            g.add_edge(source, target, weight=weight)
+
+    # Get total number of edges
+    total_edges = g.number_of_edges()
 
     # Compute centrality measures
     degree_centrality = nx.degree_centrality(g)
-    weighted_degree_centrality = nx.degree_centrality(g_weighted)
+    weighted_degree_centrality = {node: sum(weight for _, _, weight in g.out_edges(node, data='weight')) / total_edges
+                                  for node in g.nodes}
     closeness_centrality = nx.closeness_centrality(g)
     betweenness_centrality = nx.betweenness_centrality(g)
 
@@ -48,12 +50,8 @@ def compute_stats(in_file):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-i", "--input_file", help="Input json interactions file", required=True
-    )
-    parser.add_argument(
-        "-o", "--output_file", help="Output json stats file", required=True
-    )
+    parser.add_argument("-i", "--input_file", help="Input json interactions file", required=True)
+    parser.add_argument("-o", "--output_file", help="Output json stats file", required=True)
 
     in_file = parser.parse_args().input_file
     out_file = parser.parse_args().output_file
